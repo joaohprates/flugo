@@ -9,6 +9,9 @@ import {
   TableCell,
   TableBody,
   Chip,
+  TableSortLabel,
+  Avatar,
+  Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
@@ -24,8 +27,12 @@ type Employee = {
 
 function EmployeesList() {
   const navigate = useNavigate();
+
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [orderBy, setOrderBy] = useState<keyof Employee>("name");
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -48,8 +55,20 @@ function EmployeesList() {
     fetchEmployees();
   }, []);
 
+  const handleSort = (property: keyof Employee) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const sortedEmployees = [...employees].sort((a, b) => {
+    if (a[orderBy] < b[orderBy]) return order === "asc" ? -1 : 1;
+    if (a[orderBy] > b[orderBy]) return order === "asc" ? 1 : -1;
+    return 0;
+  });
+
   return (
-    <Box>
+    <Box sx={{ width: "100%" }}>
       <Box
         sx={{
           display: "flex",
@@ -65,6 +84,15 @@ function EmployeesList() {
         <Button
           variant="contained"
           onClick={() => navigate("/employees/new")}
+          sx={{
+                backgroundColor: "#22C55E",
+                height: 44,
+                px: 3,
+                textTransform: "none",
+                "&:hover": {
+                backgroundColor: "#16A34A",
+                },
+            }}
         >
           Novo Colaborador
         </Button>
@@ -73,33 +101,118 @@ function EmployeesList() {
       {loading ? (
         <Typography>Carregando...</Typography>
       ) : (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nome</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Departamento</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
+        <Paper
+          elevation={0}
+          sx={{
+            width: "100%",
+            borderRadius: 3,
+            overflow: "hidden",
+            border: "1px solid #E5E7EB",
+            boxShadow: "0px 60px 60px 0px rgba(0, 0, 0, 0.07)",
+            mt: 2,
+          }}
+        >
+          <Table
+            sx={{
+              width: "100%",
 
-          <TableBody>
-            {employees.map((emp) => (
-              <TableRow key={emp.id}>
-                <TableCell>{emp.name}</TableCell>
-                <TableCell>{emp.email}</TableCell>
-                <TableCell>{emp.department}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={emp.status ? "Ativo" : "Inativo"}
-                    color={emp.status ? "success" : "error"}
-                    size="small"
-                  />
+              tableLayout: "fixed",
+              "& .MuiTableCell-root": {
+                py: 3,
+                px: 4,
+              },
+            }}
+          >
+            <TableHead>
+              <TableRow
+                sx={{
+                  backgroundColor: "#F4F6F8",
+                  "& .MuiTableCell-root": {
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: "#374151",
+                    py: 2.5,
+                  },
+                }}
+              >
+                <TableCell sx={{ width: "40%" }}>
+                  <TableSortLabel
+                    active={orderBy === "name"}
+                    direction={orderBy === "name" ? order : "asc"}
+                    onClick={() => handleSort("name")}
+                  >
+                    Nome
+                  </TableSortLabel>
+                </TableCell>
+
+                <TableCell sx={{ width: "30%" }}>
+                  <TableSortLabel
+                    active={orderBy === "email"}
+                    direction={orderBy === "email" ? order : "asc"}
+                    onClick={() => handleSort("email")}
+                  >
+                    Email
+                  </TableSortLabel>
+                </TableCell>
+
+                <TableCell sx={{ width: "20%" }}>
+                  <TableSortLabel
+                    active={orderBy === "department"}
+                    direction={orderBy === "department" ? order : "asc"}
+                    onClick={() => handleSort("department")}
+                  >
+                    Departamento
+                  </TableSortLabel>
+                </TableCell>
+
+                <TableCell sx={{ width: "10%" }}>
+                  <TableSortLabel
+                    active={orderBy === "status"}
+                    direction={orderBy === "status" ? order : "asc"}
+                    onClick={() => handleSort("status")}
+                  >
+                    Status
+                  </TableSortLabel>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+
+            <TableBody>
+              {sortedEmployees.map((emp) => (
+                <TableRow key={emp.id}>
+                  <TableCell>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Avatar
+                        src={`https://api.dicebear.com/7.x/personas/svg?seed=${emp.name}`}
+                        sx={{ width: 40, height: 40 }}
+                      />
+                      {emp.name}
+                    </Box>
+                  </TableCell>
+
+                  <TableCell sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {emp.email}
+                  </TableCell>
+                  <TableCell>{emp.department}</TableCell>
+
+                  <TableCell>
+                    <Chip
+                      label={emp.status ? "Ativo" : "Inativo"}
+                      size="small"
+                      sx={{
+                        px: 1,
+                        backgroundColor: emp.status ? "#DCFCE7" : "#FEE2E2",
+                        color: emp.status ? "#166534" : "#991B1B",
+                        fontWeight: 500,
+                        borderRadius: "999px",
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
       )}
     </Box>
   );

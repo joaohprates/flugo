@@ -1,6 +1,7 @@
 import { TextField, Box } from "@mui/material";
 import { useState } from "react";
 import type { EmployeeFormData } from "./StepperForm/StepperForm";
+import { field } from "firebase/firestore/pipelines";
 
 type Props = {
   formData: EmployeeFormData;
@@ -37,6 +38,29 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
         onChange={handleNameChange}
         fullWidth
         required
+        sx={{
+          "& .MuiInputLabel-root": {
+            color: "#22C55E",
+          },
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: "#22C55E",
+          },
+          "& .MuiFormLabel-asterisk": {
+            color: "#22C55E",
+          },
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            "& fieldset": {
+              borderColor: "#22C55E",
+            },
+            "&:hover fieldset": {
+              borderColor: "#22C55E",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#22C55E",
+            },
+          },
+        }}
       />
 
       <TextField
@@ -48,6 +72,29 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
         helperText={emailError ? "Email inválido" : ""}
         fullWidth
         required
+        sx={{
+          "& .MuiInputLabel-root": {
+            color: "#22C55E",
+          },
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: "#22C55E",
+          },
+          "& .MuiFormLabel-asterisk": {
+            color: "#22C55E",
+          },
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            "& fieldset": {
+              borderColor: "#22C55E",
+            },
+            "&:hover fieldset": {
+              borderColor: "#22C55E",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#22C55E",
+            },
+          },
+        }}
       />
     </Box>
   );
