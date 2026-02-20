@@ -3,7 +3,7 @@ import { Box, Typography, Avatar, } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { Link } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import flugoLogo from "../assets/flugo_logo.png";
+
 
 type Props = {
   children: ReactNode;
@@ -23,9 +23,9 @@ function Layout({ children }: Props) {
         }}
       >
         <img
-          src={flugoLogo}
+          src="https://flugo.com.br/images/flugo_hor.png"
           alt="Flugo Logo"
-          style={{ width: "40%", height: "auto", marginBottom: 32 }}
+          style={{ width: "35%", height: "auto", marginBottom: 32 }}
         />
 
         <Box
