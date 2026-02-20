@@ -32,7 +32,25 @@ cd flugo
 ### 2. Instale as dependências
 
 ```bash
-npm install
+
+npm install react react-dom
+npm install vite @vitejs/plugin-react
+npm install typescript
+npm install @mui/material @mui/icons-material
+npm install @emotion/react @emotion/styled
+npm install @fontsource/public-sans
+npm install firebase
+npm install react-router-dom
+npm install react-hook-form
+npm install zod
+npm install @hookform/resolvers
+npm install eslint @eslint/js
+npm install eslint-plugin-react-hooks
+npm install eslint-plugin-react-refresh
+npm install typescript-eslint
+npm install @types/react @types/react-dom @types/node
+npm install globals
+
 ```
 
 ---

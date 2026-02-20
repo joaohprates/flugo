@@ -3,7 +3,7 @@ import { Box, Typography, Avatar, } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { Link } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import flugoLogo from "../src/assets/flugo_logo.png";
+import flugoLogo from "../assets/flugo_logo.png";
 
 type Props = {
   children: ReactNode;
