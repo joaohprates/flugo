@@ -4,8 +4,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Switch,
+  Typography,
 } from "@mui/material";
 import type { EmployeeFormData } from "./StepperForm/StepperForm";
 
@@ -29,16 +28,45 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
     }));
   };
 
-  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      status: event.target.checked,
-    }));
-  };
+  
 
   return (
     <Box display="flex" flexDirection="column" gap={3} mt={4}>
-      <FormControl fullWidth required>
+
+      <Typography
+        fontSize={24}
+        fontWeight={700}
+        fontStyle={"bold"}
+        color="#637381"
+      >
+        Informações Profissionais
+      </Typography>
+
+      <FormControl fullWidth required
+        sx={{
+          "& .MuiInputLabel-root": {
+            color: "#919eab",
+          },
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: "#22C55E",
+          },
+          "& .MuiFormLabel-asterisk": {
+            color: "#919eab",
+          },
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            "& fieldset": {
+              borderColor: "#919eab",
+            },
+            "&:hover fieldset": {
+              borderColor: "#22C55E",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#22C55E",
+            },
+          },
+        }}
+        >
         <InputLabel>Departamento</InputLabel>
         <Select
           value={formData.department}
@@ -53,15 +81,6 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
         </Select>
       </FormControl>
 
-      <FormControlLabel
-        control={
-          <Switch
-            checked={formData.status}
-            onChange={handleStatusChange}
-          />
-        }
-        label={formData.status ? "Ativo" : "Inativo"}
-      />
     </Box>
   );
 };

@@ -77,7 +77,7 @@ function EmployeesList() {
           mb: 4,
         }}
       >
-        <Typography variant="h5" fontWeight={600}>
+        <Typography variant="h5" fontWeight={700}>
           Colaboradores
         </Typography>
 
@@ -85,9 +85,11 @@ function EmployeesList() {
           variant="contained"
           onClick={() => navigate("/employees/new")}
           sx={{
+                fontWeight: 700,
                 backgroundColor: "#22C55E",
                 height: 44,
-                px: 3,
+                px: 2,
+                borderRadius: 2,
                 textTransform: "none",
                 "&:hover": {
                 backgroundColor: "#16A34A",
@@ -105,10 +107,10 @@ function EmployeesList() {
           elevation={0}
           sx={{
             width: "100%",
-            borderRadius: 3,
+            borderRadius: 4,
             overflow: "hidden",
-            border: "1px solid #E5E7EB",
-            boxShadow: "0px 60px 60px 0px rgba(0, 0, 0, 0.07)",
+            border: "0px solid #E5E7EB",
+            boxShadow: "1px 60px 60px 0px rgba(0, 0, 0, 0.11)",
             mt: 2,
           }}
         >
@@ -118,7 +120,7 @@ function EmployeesList() {
 
               tableLayout: "fixed",
               "& .MuiTableCell-root": {
-                py: 3,
+                py: 2.5,
                 px: 4,
               },
             }}
@@ -130,7 +132,7 @@ function EmployeesList() {
                   "& .MuiTableCell-root": {
                     fontSize: 14,
                     fontWeight: 600,
-                    color: "#374151",
+                    color: "#3c424dca",
                     py: 2.5,
                   },
                 }}
@@ -190,7 +192,13 @@ function EmployeesList() {
                     </Box>
                   </TableCell>
 
-                  <TableCell sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <TableCell 
+                    sx={{ 
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontWeight: 400, 
+                    }}>
                     {emp.email}
                   </TableCell>
                   <TableCell>{emp.department}</TableCell>
@@ -200,11 +208,12 @@ function EmployeesList() {
                       label={emp.status ? "Ativo" : "Inativo"}
                       size="small"
                       sx={{
-                        px: 1,
-                        backgroundColor: emp.status ? "#DCFCE7" : "#FEE2E2",
-                        color: emp.status ? "#166534" : "#991B1B",
-                        fontWeight: 500,
-                        borderRadius: "999px",
+                        px: 0,
+                        backgroundColor: emp.status ? "#22C55E29" : "#FF563029",
+                        color: emp.status ? "#118D57" : "#B71D18",
+                        fontWeight: 700,
+                        fontStyle: "bold",
+                        borderRadius: "6px",
                       }}
                     />
                   </TableCell>

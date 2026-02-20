@@ -10,9 +10,10 @@ import {
 } from "@mui/material";
 import BasicInfoForm from "../BasicInfoForm";
 import ProfessionalInfoForm from "../ProfessionalInfoForm";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs  } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export type EmployeeFormData = {
   name: string;
@@ -36,8 +37,24 @@ export function StepperForm() {
   const steps = ["Infos Básicas", "Infos Profissionais"];
 
   const progress = (activeStep / steps.length) * 100;
+  
+  const isEmailUnique = async (email: string) => {
+    const q = query(
+      collection(db, "employees"),
+      where("email", "==", email)
+    );
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.empty;
+  };
 
   const handleBack = () => {
+    if (activeStep === 0) {
+      navigate("/employees");
+      return;
+    }
+
     setActiveStep((prev) => prev - 1);
   };
 
@@ -58,6 +75,23 @@ export function StepperForm() {
         alert("Preencha nome e email corretamente.");
         return;
       }
+
+      setLoading(true);
+
+      const unique = await isEmailUnique(formData.email);
+
+      if (!unique) {
+        setLoading(false);
+        alert("Este e-mail já está cadastrado.");
+        return;
+      }
+
+      setLoading(false);
+      setActiveStep((prev) => prev + 1);
+      return;
+      
+
+      
       setActiveStep((prev) => prev + 1);
       return;
     }
@@ -88,13 +122,35 @@ export function StepperForm() {
   return (
     <Box>
 
-      {/* Breadcrumb */}
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
+        <Typography
+          component={Link}
+          to="/employees"
+          fontSize={14}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 1.5,
+            textDecoration: "none",
+            cursor: "pointer",
+            color: "#000000",
+            "&:hover": {
+              color: "#000000",
+            },
+          }}
+        >
+          Colaboradores
+        </Typography>
+
         <Typography fontSize={14} color="#6B7280">
-          Colaboradores • Cadastrar Colaborador
+          •
+        </Typography>
+
+        <Typography fontSize={14} color="#6B7280">
+          Cadastrar Colaborador
         </Typography>
       </Box>
-
       {/* Progress Bar */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
         <Box sx={{ flex: 1 }}>
@@ -105,6 +161,7 @@ export function StepperForm() {
               height: 6,
               borderRadius: 999,
               backgroundColor: "#E5E7EB",
+              pointerEvents: "none",
               "& .MuiLinearProgress-bar": {
                 backgroundColor: "#22C55E",
                 borderRadius: 999,
@@ -118,10 +175,10 @@ export function StepperForm() {
       </Box>
 
       {/* Layout */}
-      <Box sx={{ display: "flex", gap: 6 }}>
+      <Box sx={{ display: "flex", gap: 6, position: "relative" }}>
 
         {/* Vertical Stepper */}
-        <Box sx={{ width: 220 }}>
+        <Box sx={{ width: 220, position: "relative", zIndex: 0 }}>
           <Stepper
             activeStep={activeStep}
             orientation="vertical"
@@ -147,7 +204,7 @@ export function StepperForm() {
         </Box>
 
         {/* Form */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, position: "relative", zIndex: 1 }}>
           {activeStep === 0 && (
             <BasicInfoForm formData={formData} setFormData={setFormData} />
           )}
@@ -171,7 +228,7 @@ export function StepperForm() {
             }}>
             <Button
               onClick={handleBack}
-              disabled={activeStep === 0 || loading}
+              disabled={loading}
               sx={{
                 color: "black",
                 width: {

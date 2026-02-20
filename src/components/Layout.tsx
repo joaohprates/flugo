@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Box, Typography, Avatar, } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
+import { Link } from "react-router-dom";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 type Props = {
   children: ReactNode;
@@ -19,41 +21,62 @@ function Layout({ children }: Props) {
           p: 3,
         }}
       >
-        <Typography variant="h6" fontWeight={600} mb={4}>
-          Flugo
-        </Typography>
+        <img
+          src="../src/assets/flugo_logo.png"
+          alt="Flugo Logo"
+          style={{ width: "35%", height: "auto", marginBottom: 32 }}
+        />
 
         <Box
+          component={Link}
+          to="/employees"
           sx={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "space-between",
             gap: 1.5,
+            textDecoration: "none",
             cursor: "pointer",
           }}
         >
-          <Avatar
+          <Box
             sx={{
-              width: 24,
-              height: 24,
-              bgcolor: "#919EAB29",
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
             }}
-          >
-            <PersonIcon
-              sx={{
-                fontSize: 16,
-                color: "#637381",
-              }}
-            />
-          </Avatar>
+              >
+              <Avatar
+                sx={{
+                  width: 24,
+                  height: 24,
+                  bgcolor: "#919EAB29",
+                }}
+              >
+                <PersonIcon
+                  sx={{
+                    fontSize: 16,
+                    color: "#637381",
+                  }}
+                />
+              </Avatar>
 
-          <Typography
+              <Typography
+                sx={{
+                  fontWeight: 500,
+                  color: "#637381",
+                }}
+              >
+                Colaboradores
+              </Typography>
+          </Box>
+
+          <ChevronRightIcon
             sx={{
-              fontWeight: 500,
+              fontSize: 18,
               color: "#637381",
             }}
-          >
-            Colaboradores
-          </Typography>
+          />
         </Box>
       </Box>
 

@@ -1,4 +1,10 @@
-import { TextField, Box } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Typography,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 import { useState } from "react";
 import type { EmployeeFormData } from "./StepperForm/StepperForm";
 import { field } from "firebase/firestore/pipelines";
@@ -30,8 +36,24 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
     setEmailError(!isValid);
   };
 
+  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      status: e.target.checked,
+    }));
+  };
+
   return (
     <Box display="flex" flexDirection="column" gap={3} mt={4}>
+
+      <Typography
+        fontSize={24}
+        fontWeight={700}
+        fontStyle={"bold"}
+        color="#637381"
+      >
+        Informações Básicas
+      </Typography>
       <TextField
         label="Nome"
         value={formData.name}
@@ -40,18 +62,18 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
         required
         sx={{
           "& .MuiInputLabel-root": {
-            color: "#22C55E",
+            color: "#919eab",
           },
           "& .MuiInputLabel-root.Mui-focused": {
             color: "#22C55E",
           },
           "& .MuiFormLabel-asterisk": {
-            color: "#22C55E",
+            color: "#919eab",
           },
           "& .MuiOutlinedInput-root": {
             borderRadius: 2,
             "& fieldset": {
-              borderColor: "#22C55E",
+              borderColor: "#919eab",
             },
             "&:hover fieldset": {
               borderColor: "#22C55E",
@@ -74,18 +96,18 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
         required
         sx={{
           "& .MuiInputLabel-root": {
-            color: "#22C55E",
+            color: "#919eab",
           },
           "& .MuiInputLabel-root.Mui-focused": {
             color: "#22C55E",
           },
           "& .MuiFormLabel-asterisk": {
-            color: "#22C55E",
+            color: "#919eab",
           },
           "& .MuiOutlinedInput-root": {
             borderRadius: 2,
             "& fieldset": {
-              borderColor: "#22C55E",
+              borderColor: "#919eab",
             },
             "&:hover fieldset": {
               borderColor: "#22C55E",
@@ -95,6 +117,27 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
             },
           },
         }}
+      />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={formData.status}
+            onChange={handleStatusChange}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: "#ffffff",
+              },
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: "#22C55E",
+                opacity: 1,
+              },
+              "& .MuiSwitch-track": {
+                backgroundColor: "#E5E7EB",
+              },
+            }}
+          />
+        }
+        label="Ativar ao criar"
       />
     </Box>
   );
