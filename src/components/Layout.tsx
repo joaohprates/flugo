@@ -1,18 +1,29 @@
-import type { ReactNode } from "react";
-import { Box, Typography, Avatar, } from "@mui/material";
+import { Box, Typography, Avatar } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
-import { Link } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import type { JSX } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "../services/auth";
 
+function Layout(): JSX.Element {
 
-type Props = {
-  children: ReactNode;
-};
+  const navigate = useNavigate(); 
 
-function Layout({ children }: Props) {
+  const handleLogout = async () => {
+    console.log("Deslogando...");
+
+    await signOut(auth);
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("login_time");
+
+    navigate("/login");
+  };
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      
+
       <Box
         sx={{
           width: { xs: 0, md: 240 },
@@ -40,36 +51,30 @@ function Layout({ children }: Props) {
             cursor: "pointer",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-            }}
-              >
-              <Avatar
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <Avatar
+              sx={{
+                width: 24,
+                height: 24,
+                bgcolor: "#919EAB29",
+              }}
+            >
+              <PersonIcon
                 sx={{
-                  width: 24,
-                  height: 24,
-                  bgcolor: "#919EAB29",
-                }}
-              >
-                <PersonIcon
-                  sx={{
-                    fontSize: 16,
-                    color: "#637381",
-                  }}
-                />
-              </Avatar>
-
-              <Typography
-                sx={{
-                  fontWeight: 500,
+                  fontSize: 16,
                   color: "#637381",
                 }}
-              >
-                Colaboradores
-              </Typography>
+              />
+            </Avatar>
+
+            <Typography
+              sx={{
+                fontWeight: 500,
+                color: "#637381",
+              }}
+            >
+              Colaboradores
+            </Typography>
           </Box>
 
           <ChevronRightIcon
@@ -92,12 +97,20 @@ function Layout({ children }: Props) {
           }}
         >
           <Avatar
+            onClick={handleLogout}
             src={`https://api.dicebear.com/9.x/personas/svg?seed=Alexander`}
-            sx={{ width: 40, height: 40 }}
+            sx={{
+              width: 40,
+              height: 40,
+              cursor: "pointer",
+              transition: "0.2s",
+              "&:hover": {
+                opacity: 0.7
+              }
+            }}
           />
         </Box>
 
-        
         <Box
           sx={{
             flex: 1,
@@ -105,7 +118,7 @@ function Layout({ children }: Props) {
             backgroundColor: "#ffffff",
           }}
         >
-          {children}
+          <Outlet />
         </Box>
       </Box>
     </Box>

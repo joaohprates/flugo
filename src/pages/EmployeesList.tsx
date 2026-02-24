@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../services/firebase";
+import { db } from "../services/firestore";
 
 type Employee = {
   id: string;
