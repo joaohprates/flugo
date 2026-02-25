@@ -12,10 +12,12 @@ import {
   TableSortLabel,
   Avatar,
   Paper,
+  Checkbox,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../services/firestore";
+
 
 type Employee = {
   id: string;
@@ -26,6 +28,36 @@ type Employee = {
 };
 
 function EmployeesList() {
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const handleSelect = (id: string) => {
+    setSelected(prev =>
+      prev.includes(id)
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selected.length === employees.length) {
+      setSelected([]);
+    } else {
+      setSelected(employees.map(emp => emp.id));
+    }
+  };
+  const handleDelete = async () => {
+    await Promise.all(
+      selected.map(id =>
+        deleteDoc(doc(db, "employees", id))
+      )
+    );
+
+    setEmployees(prev =>
+      prev.filter(emp => !selected.includes(emp.id))
+    );
+
+    setSelected([]);
+  };
   const navigate = useNavigate();
 
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -81,23 +113,62 @@ function EmployeesList() {
           Colaboradores
         </Typography>
 
-        <Button
-          variant="contained"
-          onClick={() => navigate("/employees/new")}
-          sx={{
+        <Box sx={{ display: "flex", gap: 2 }}>
+
+          {selected.length === 0 && (
+            <Button
+              variant="contained"
+              onClick={() => navigate("/employees/new")}
+              sx={{
                 fontWeight: 700,
                 backgroundColor: "#22C55E",
                 height: 44,
                 px: 2,
                 borderRadius: 2,
                 textTransform: "none",
-                "&:hover": {
-                backgroundColor: "#16A34A",
-                },
-            }}
-        >
-          Novo Colaborador
-        </Button>
+              }}
+            >
+              Novo Colaborador
+            </Button>
+          )}
+
+          {selected.length === 1 && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate(`/employees/edit/${selected[0]}`)}
+              sx={{
+                fontWeight: 700,
+                backgroundColor: "#22C55E",
+                height: 44,
+                px: 2,
+                borderRadius: 2,
+                textTransform: "none",
+              }}
+            >
+              Editar
+            </Button>
+          )}
+
+          {selected.length > 0 && (
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleDelete}
+              sx={{
+                fontWeight: 700,
+                backgroundColor: "#ff303a",
+                height: 44,
+                px: 2,
+                borderRadius: 2,
+                textTransform: "none",
+              }}
+            >
+              Excluir ({selected.length})
+            </Button>
+          )}
+
+        </Box>
       </Box>
 
       {loading ? (
@@ -117,11 +188,10 @@ function EmployeesList() {
           <Table
             sx={{
               width: "100%",
-
               tableLayout: "fixed",
               "& .MuiTableCell-root": {
-                py: 2.5,
-                px: 4,
+                py: 2,
+                px: 3,
               },
             }}
           >
@@ -132,11 +202,22 @@ function EmployeesList() {
                   "& .MuiTableCell-root": {
                     fontSize: 14,
                     fontWeight: 600,
-                    color: "#3c424dca",
-                    py: 2.5,
+                    color: "#637381",
+                    py: 2,
                   },
                 }}
               >
+
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selected.length === employees.length}
+                    indeterminate={
+                      selected.length > 0 && selected.length < employees.length
+                    }
+                    onChange={handleSelectAll}
+                  />
+                </TableCell>
+
                 <TableCell sx={{ width: "40%" }}>
                   <TableSortLabel
                     active={orderBy === "name"}
@@ -176,12 +257,19 @@ function EmployeesList() {
                     Status
                   </TableSortLabel>
                 </TableCell>
+
               </TableRow>
             </TableHead>
 
             <TableBody>
               {sortedEmployees.map((emp) => (
                 <TableRow key={emp.id}>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selected.includes(emp.id)}
+                      onChange={() => handleSelect(emp.id)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                       <Avatar

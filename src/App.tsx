@@ -7,6 +7,8 @@ import { theme } from "./themes/theme";
 import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./pages/Login";
+import EditEmployee from "./pages/EditEmployee";
+
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
               <Route index element={<Navigate to="employees" />} />
               <Route path="employees" element={<EmployeesList />} />
               <Route path="employees/new" element={<CreateEmployee />} />
+              <Route path="employees/edit/:id" element={<EditEmployee />} />
             </Route>
 
             {/* 404 */}

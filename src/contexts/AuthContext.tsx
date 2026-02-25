@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const MAX_SESSION_TIME = 1 * 60 * 1000; 
+  const MAX_SESSION_TIME = 30 * 60 * 1000; 
 
   const checkSession = async () => {
     const loginTime = localStorage.getItem("login_time");
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: any) => {
     const diff = Date.now() - Number(loginTime);
 
     if (diff > MAX_SESSION_TIME) {
-      console.log("🔥 Sessão expirada");
+      console.log("Sessão expirada");
 
       await signOut(auth);
 

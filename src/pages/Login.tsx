@@ -31,11 +31,14 @@ export default function Login() {
   return (
     <Box display="flex" flexDirection="column" gap={2}
       sx={{ maxWidth: 400, margin: "100px auto", p: 3}}>
-      <img
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <img
           src="https://flugo.com.br/images/flugo_hor.png"
           alt="Flugo Logo"
-          style={{ width: "50%", height: "auto", marginBottom: 32 }}
+          
+          style={{ width: "50%", height: "auto", marginBottom: 32}}
         />
+      </Box>
       <TextField label="Email" onChange={(e)=>setEmail(e.target.value)}
         sx={{
           "& .MuiInputLabel-root": {

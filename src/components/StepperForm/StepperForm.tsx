@@ -16,10 +16,16 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export type EmployeeFormData = {
+  id?: string;
   name: string;
   email: string;
   department: string;
   status: boolean;
+  role: string;
+  admissionDate: string;
+  level: string;
+  managerId: string;
+  baseSalary: number;
 };
 
 export function StepperForm() {
@@ -29,6 +35,11 @@ export function StepperForm() {
     email: "",
     department: "",
     status: true,
+    role: "",
+    admissionDate: "",
+    level: "",
+    managerId: "",
+    baseSalary: 0,
   });
   const [loading, setLoading] = useState(false);
 
