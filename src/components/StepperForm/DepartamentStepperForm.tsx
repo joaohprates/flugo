@@ -28,7 +28,7 @@ type EmployeeFromDB = {
 };
 function DepartmentStepperForm() {
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [managers, setManagers] = useState<EmployeeFromDB[]>([]);
 

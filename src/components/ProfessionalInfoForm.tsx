@@ -79,7 +79,6 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
       [field]: e.target.value
     }));
   };
-  const isEditing = !!formData.id;
   const formatCurrency = (value: number | string) => {
     if (!value) return "";
 

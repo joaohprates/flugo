@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Box,
-  Stepper,
-  Step,
-  StepLabel,
   Button,
-  LinearProgress,
   Typography,
   FormControl,
   InputLabel,
@@ -39,7 +35,7 @@ function DepartmentEditStepperForm() {
   });
 
   const [managers, setManagers] = useState<EmployeeFromDB[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   useEffect(() => {
 
