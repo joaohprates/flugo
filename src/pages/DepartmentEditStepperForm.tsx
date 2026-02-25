@@ -35,7 +35,6 @@ function DepartmentEditStepperForm() {
   });
 
   const [managers, setManagers] = useState<EmployeeFromDB[]>([]);
-  const [, setLoading] = useState(false);
 
   useEffect(() => {
 
@@ -70,8 +69,6 @@ function DepartmentEditStepperForm() {
       alert("Preencha tudo.");
       return;
     }
-
-    setLoading(true);
 
     await updateDoc(doc(db, "departments", id!), {
       ...formData
