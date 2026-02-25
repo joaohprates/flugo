@@ -1,18 +1,65 @@
 import { Box, Typography, Avatar } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
-import { Link, Outlet, useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import WorkIcon from "@mui/icons-material/Work";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import type { JSX } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/auth";
 
-function Layout(): JSX.Element {
+type MenuItemProps = {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+};
 
-  const navigate = useNavigate(); 
+const SidebarItem = ({ to, icon, label }: MenuItemProps) => (
+  <Box
+    component={Link}
+    to={to}
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      textDecoration: "none",
+      mb: 2,
+      cursor: "pointer",
+    }}
+  >
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+      <Avatar
+        sx={{
+          width: 24,
+          height: 24,
+          bgcolor: "#919EAB29",
+        }}
+      >
+        {icon}
+      </Avatar>
+
+      <Typography
+        sx={{
+          fontWeight: 500,
+          color: "#637381",
+        }}
+      >
+        {label}
+      </Typography>
+    </Box>
+
+    <ChevronRightIcon
+      sx={{
+        fontSize: 18,
+        color: "#637381",
+      }}
+    />
+  </Box>
+);
+
+function Layout(): JSX.Element {
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
-    console.log("Deslogando...");
-
     await signOut(auth);
 
     localStorage.removeItem("token");
@@ -23,7 +70,6 @@ function Layout(): JSX.Element {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-
       <Box
         sx={{
           width: { xs: 0, md: 240 },
@@ -39,51 +85,17 @@ function Layout(): JSX.Element {
           style={{ width: "35%", height: "auto", marginBottom: 32 }}
         />
 
-        <Box
-          component={Link}
+        <SidebarItem
           to="/employees"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 1.5,
-            textDecoration: "none",
-            cursor: "pointer",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <Avatar
-              sx={{
-                width: 24,
-                height: 24,
-                bgcolor: "#919EAB29",
-              }}
-            >
-              <PersonIcon
-                sx={{
-                  fontSize: 16,
-                  color: "#637381",
-                }}
-              />
-            </Avatar>
+          icon={<PersonIcon sx={{ fontSize: 16, color: "#637381" }} />}
+          label="Colaboradores"
+        />
 
-            <Typography
-              sx={{
-                fontWeight: 500,
-                color: "#637381",
-              }}
-            >
-              Colaboradores
-            </Typography>
-          </Box>
-
-          <ChevronRightIcon
-            sx={{
-              fontSize: 18,
-              color: "#637381",
-            }}
-          />
-        </Box>
+        <SidebarItem
+          to="/departments"
+          icon={<WorkIcon sx={{ fontSize: 16, color: "#637381" }} />}
+          label="Departamentos"
+        />
       </Box>
 
       <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
@@ -105,8 +117,8 @@ function Layout(): JSX.Element {
               cursor: "pointer",
               transition: "0.2s",
               "&:hover": {
-                opacity: 0.7
-              }
+                opacity: 0.7,
+              },
             }}
           />
         </Box>

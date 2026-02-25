@@ -136,9 +136,9 @@ function EmployeesList() {
               variant="contained"
               onClick={() => navigate("/employees/new")}
               sx={{
-                fontWeight: 700,
                 backgroundColor: "#22C55E",
                 height: 44,
+                minWidth: 160,
                 px: 2,
                 borderRadius: 2,
                 textTransform: "none",
@@ -154,9 +154,9 @@ function EmployeesList() {
               color="primary"
               onClick={() => navigate(`/employees/edit/${selected[0]}`)}
               sx={{
-                fontWeight: 700,
                 backgroundColor: "#22C55E",
                 height: 44,
+                minWidth: 160,
                 px: 2,
                 borderRadius: 2,
                 textTransform: "none",
@@ -172,9 +172,8 @@ function EmployeesList() {
               color="error"
               onClick={handleDelete}
               sx={{
-                fontWeight: 700,
-                backgroundColor: "#ff303a",
                 height: 44,
+                minWidth: 160,
                 px: 2,
                 borderRadius: 2,
                 textTransform: "none",

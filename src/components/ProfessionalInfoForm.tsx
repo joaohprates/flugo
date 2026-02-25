@@ -18,48 +18,60 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 
+
+
 type Props = {
   formData: EmployeeFormData;
   setFormData: React.Dispatch<React.SetStateAction<EmployeeFormData>>;
 };
 
-const departments = [
-  "Tecnologia",
-  "Financeiro",
-  "Recursos Humanos",
-  "Marketing",
-];
+type DepartmentFromDB = {
+  id: string;
+  name: string;
+};
 const levels = [
   "Júnior",
   "Pleno",
   "Sênior",
   "Gestor"
 ];
-
-const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
-  type EmployeeFromDB = {
+type EmployeeFromDB = {
     id: string;
     name: string;
     level: string;
   };
+const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
+  
   const [managers, setManagers] = useState<EmployeeFromDB[]>([]);
+  const [departments, setDepartments] = useState<DepartmentFromDB[]>([]);
 
   useEffect(() => {
-    const fetchManagers = async () => {
-      const snapshot = await getDocs(collection(db, "employees"));
 
-      const data: EmployeeFromDB[] = snapshot.docs.map(doc => ({
+    const fetchData = async () => {
+
+      const empSnapshot = await getDocs(collection(db, "employees"));
+      const depSnapshot = await getDocs(collection(db, "departments"));
+
+      const managersData = empSnapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...(doc.data())
+        } as EmployeeFromDB))
+        .filter(emp => emp.level === "Gestor");
+
+      const departmentsData = depSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...(doc.data() as Omit<EmployeeFromDB, "id">)
-      }));
+        ...(doc.data())
+      } as DepartmentFromDB));
 
-      const onlyManagers = data.filter(emp => emp.level === "Gestor");
+      setManagers(managersData);
+      setDepartments(departmentsData);
 
-      setManagers(onlyManagers);
     };
 
-    fetchManagers();
-  }, []);
+    fetchData();
+
+}, []);
 
   const handleChange = (field: keyof EmployeeFormData) => (e: any) => {
     setFormData(prev => ({
@@ -102,12 +114,14 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
         className="text-field-modelo-mm">
           <InputLabel>Departamento</InputLabel>
           <Select
-            value={formData.department}
+            value={formData.departmentId}
             label="Departamento"
-            onChange={handleChange("department")}
+            onChange={handleChange("departmentId")}
           >
             {departments.map(dep => (
-              <MenuItem key={dep} value={dep}>{dep}</MenuItem>
+              <MenuItem key={dep.id} value={dep.id}>
+                {dep.name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -174,10 +188,7 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
             onChange={handleChange("managerId")}
           >
             {managers
-              .filter(manager => {
-                if (!isEditing) return true;
-                return manager.id !== formData.id;
-              })
+              .filter(manager => manager.id !== formData.id)
               .map(manager => (
                 <MenuItem key={manager.id} value={manager.id}>
                   {manager.name}

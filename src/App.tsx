@@ -9,7 +9,9 @@ import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./pages/Login";
 import EditEmployee from "./pages/EditEmployee";
 import './App.css';
-
+import DepartmentsList from "./pages/DepartmentsList";
+import DepartmentStepperForm from "./components/StepperForm/DepartamentStepperForm";
+import DepartmentEditStepperForm from "./pages/DepartmentEditStepperForm";
 
 function App() {
   return (
@@ -31,6 +33,9 @@ function App() {
               <Route path="employees" element={<EmployeesList />} />
               <Route path="employees/new" element={<CreateEmployee />} />
               <Route path="employees/edit/:id" element={<EditEmployee />} />
+              <Route path="departments" element={<DepartmentsList />} />
+              <Route path="departments/new" element={<DepartmentStepperForm />} />
+              <Route path="departments/edit/:id" element={<DepartmentEditStepperForm />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/login" />} />

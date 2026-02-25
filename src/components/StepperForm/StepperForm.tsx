@@ -19,7 +19,7 @@ export type EmployeeFormData = {
   id?: string;
   name: string;
   email: string;
-  department: string;
+  departmentId: string;
   status: boolean;
   role: string;
   admissionDate: string;
@@ -33,13 +33,14 @@ export function StepperForm() {
   const [formData, setFormData] = useState<EmployeeFormData>({
     name: "",
     email: "",
-    department: "",
+    departmentId: "",
     status: true,
     role: "",
     admissionDate: "",
     level: "",
     managerId: "",
     baseSalary: 0,
+
   });
   const [loading, setLoading] = useState(false);
 
@@ -76,7 +77,7 @@ export function StepperForm() {
   };
 
   const isProfessionalInfoValid = () => {
-    if (!formData.department) return false;
+    if (!formData.departmentId) return false;
     return true;
   };
 
@@ -162,7 +163,7 @@ export function StepperForm() {
           Cadastrar Colaborador
         </Typography>
       </Box>
-      {/* Progress Bar */}
+
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
         <Box sx={{ flex: 1 }}>
           <LinearProgress
@@ -185,10 +186,10 @@ export function StepperForm() {
         </Typography>
       </Box>
 
-      {/* Layout */}
+
       <Box sx={{ display: "flex", gap: 6, position: "relative" }}>
 
-        {/* Vertical Stepper */}
+
         <Box sx={{ width: 220, position: "relative", zIndex: 0 }}>
           <Stepper
             activeStep={activeStep}
@@ -214,7 +215,7 @@ export function StepperForm() {
           </Stepper>
         </Box>
 
-        {/* Form */}
+
         <Box sx={{ flex: 1, position: "relative", zIndex: 1 }}>
           {activeStep === 0 && (
             <BasicInfoForm formData={formData} setFormData={setFormData} />

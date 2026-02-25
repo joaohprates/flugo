@@ -16,7 +16,7 @@ export default function EditEmployee() {
   const [formData, setFormData] = useState<EmployeeFormData>({
     name: "",
     email: "",
-    department: "",
+    departmentId: "",
     status: true,
     role: "",
     admissionDate: "",
