@@ -98,8 +98,8 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
         Informações Profissionais
       </Typography>
       
-        
-        <FormControl fullWidth required>
+        <FormControl fullWidth required
+        className="text-field-modelo-mm">
           <InputLabel>Departamento</InputLabel>
           <Select
             value={formData.department}
@@ -112,16 +112,17 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
           </Select>
         </FormControl>
 
-        
+
         <TextField
           label="Cargo"
+          className="text-field-modelo-mm"
           value={formData.role}
           onChange={handleChange("role")}
           fullWidth
           required
         />
 
-        
+
         <LocalizationProvider
           dateAdapter={AdapterDayjs}
           adapterLocale="pt-br"
@@ -140,34 +141,17 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
             }}
             slotProps={{
               textField: {
+                className: "text-field-modelo-mm",
                 fullWidth: true,
                 required: true,
-                sx: {
-                  "& .MuiInputLabel-root": {
-                    color: "#919eab",
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#22C55E",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 2,
-                    "& fieldset": {
-                      borderColor: "#919eab",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#22C55E",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#22C55E",
-                    },
-                  },
-                }
+                variant: "outlined",
               }
             }}
           />
         </LocalizationProvider>
-        
-        <FormControl fullWidth required>
+
+        <FormControl fullWidth required
+        className="text-field-modelo-mm">
           <InputLabel>Nível</InputLabel>
           <Select
             value={formData.level}
@@ -180,8 +164,9 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
           </Select>
         </FormControl>
 
-        
-        <FormControl fullWidth required>
+
+        <FormControl fullWidth required
+        className="text-field-modelo-mm">
           <InputLabel>Gestor</InputLabel>
           <Select
             value={formData.managerId || ""}
@@ -201,9 +186,10 @@ const ProfessionalInfoForm = ({ formData, setFormData }: Props) => {
           </Select>
         </FormControl>
       
-      
+
       <TextField
         label="Salário Base"
+        className="text-field-modelo-mm"
         value={formatCurrency(formData.baseSalary)}
         onChange={handleSalaryChange}
         fullWidth

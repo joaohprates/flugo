@@ -8,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./pages/Login";
 import EditEmployee from "./pages/EditEmployee";
+import './App.css';
 
 
 function App() {
@@ -16,11 +17,8 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-
-            {/* 🔓 ROTA PÚBLICA */}
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Navigate to="/employees" />} />
-            {/* 🔒 ROTAS PROTEGIDAS */}
             <Route
               path="/"
               element={
@@ -35,7 +33,6 @@ function App() {
               <Route path="employees/edit/:id" element={<EditEmployee />} />
             </Route>
 
-            {/* 404 */}
             <Route path="*" element={<Navigate to="/login" />} />
 
           </Routes>

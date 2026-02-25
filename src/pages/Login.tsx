@@ -40,53 +40,11 @@ export default function Login() {
         />
       </Box>
       <TextField label="Email" onChange={(e)=>setEmail(e.target.value)}
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "#919eab",
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "#22C55E",
-          },
-          "& .MuiFormLabel-asterisk": {
-            color: "#919eab",
-          },
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 2,
-            "& fieldset": {
-              borderColor: "#919eab",
-            },
-            "&:hover fieldset": {
-              borderColor: "#22C55E",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "#22C55E",
-            },
-          },
-        }}/>
+        className="text-field-modelo-mm"
+        />
       <TextField label="Senha" type="password" onChange={(e)=>setPassword(e.target.value)}
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "#919eab",
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "#22C55E",
-          },
-          "& .MuiFormLabel-asterisk": {
-            color: "#919eab",
-          },
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 2,
-            "& fieldset": {
-              borderColor: "#919eab",
-            },
-            "&:hover fieldset": {
-              borderColor: "#22C55E",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "#22C55E",
-            },
-          },
-        }}/>
+        className="text-field-modelo-mm"
+        />
       <Button variant="contained" onClick={handleLogin}
         sx={{
                 fontWeight: 700,

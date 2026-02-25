@@ -13,6 +13,11 @@ import {
   Avatar,
   Paper,
   Checkbox,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
@@ -61,6 +66,11 @@ function EmployeesList() {
   const navigate = useNavigate();
 
   const [employees, setEmployees] = useState<Employee[]>([]);
+
+  const [nameFilter, setNameFilter] = useState("");
+  const [emailFilter, setEmailFilter] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+
   const [loading, setLoading] = useState(true);
 
   const [orderBy, setOrderBy] = useState<keyof Employee>("name");
@@ -93,7 +103,13 @@ function EmployeesList() {
     setOrderBy(property);
   };
 
-  const sortedEmployees = [...employees].sort((a, b) => {
+  const filteredEmployees = employees.filter(emp =>
+    emp.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+    emp.email.toLowerCase().includes(emailFilter.toLowerCase()) &&
+    (departmentFilter === "" || emp.department === departmentFilter)
+  );
+
+  const sortedEmployees = [...filteredEmployees].sort((a, b) => {
     if (a[orderBy] < b[orderBy]) return order === "asc" ? -1 : 1;
     if (a[orderBy] > b[orderBy]) return order === "asc" ? 1 : -1;
     return 0;
@@ -170,10 +186,45 @@ function EmployeesList() {
 
         </Box>
       </Box>
+      <Box display="flex" gap={2} mb={2}>
 
+        <TextField
+          label="Filtrar por Nome"
+          className="text-field-modelo-mm"
+          value={nameFilter}
+          onChange={(e) => setNameFilter(e.target.value)}
+          fullWidth          
+        />
+
+        <TextField
+          label="Filtrar por Email"
+          className="text-field-modelo-mm"
+          value={emailFilter}
+          onChange={(e) => setEmailFilter(e.target.value)}
+          fullWidth
+        />
+
+        <FormControl fullWidth
+        className="text-field-modelo-mm">
+          <InputLabel>Departamento</InputLabel>
+          <Select
+            value={departmentFilter}
+            label="Departamento"
+            onChange={(e) => setDepartmentFilter(e.target.value)}
+          >
+            <MenuItem value="">Todos</MenuItem>
+            <MenuItem value="Tecnologia">Tecnologia</MenuItem>
+            <MenuItem value="Financeiro">Financeiro</MenuItem>
+            <MenuItem value="Recursos Humanos">RH</MenuItem>
+            <MenuItem value="Marketing">Marketing</MenuItem>
+          </Select>
+        </FormControl>
+
+      </Box>
       {loading ? (
         <Typography>Carregando...</Typography>
       ) : (
+      
         <Paper
           elevation={0}
           sx={{

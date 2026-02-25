@@ -60,29 +60,7 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
         onChange={handleNameChange}
         fullWidth
         required
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "#919eab",
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "#22C55E",
-          },
-          "& .MuiFormLabel-asterisk": {
-            color: "#919eab",
-          },
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 2,
-            "& fieldset": {
-              borderColor: "#919eab",
-            },
-            "&:hover fieldset": {
-              borderColor: "#22C55E",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "#22C55E",
-            },
-          },
-        }}
+        className="text-field-modelo-mm"
       />
 
       <TextField
@@ -94,29 +72,7 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
         helperText={emailError ? "Email inválido" : ""}
         fullWidth
         required
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "#919eab",
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "#22C55E",
-          },
-          "& .MuiFormLabel-asterisk": {
-            color: "#919eab",
-          },
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 2,
-            "& fieldset": {
-              borderColor: "#919eab",
-            },
-            "&:hover fieldset": {
-              borderColor: "#22C55E",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "#22C55E",
-            },
-          },
-        }}
+        className="text-field-modelo-mm"
       />
       <FormControlLabel
         control={
