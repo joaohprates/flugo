@@ -66,23 +66,28 @@ const [order] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const fetchData = async () => {
+      try {
+        const depSnapshot = await getDocs(collection(db, "departments"));
+        const empSnapshot = await getDocs(collection(db, "employees"));
 
-      const depSnapshot = await getDocs(collection(db, "departments"));
-      const empSnapshot = await getDocs(collection(db, "employees"));
+        const deps = depSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...(doc.data() as Omit<Department, "id">)
+        }));
 
-      const deps = depSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...(doc.data() as Omit<Department, "id">)
-      }));
+        const emps = empSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...(doc.data())
+        }));
 
-      const emps = empSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...(doc.data())
-      }));
+        setDepartments(deps);
+        setEmployees(emps);
 
-      setDepartments(deps);
-      setEmployees(emps);
-      setLoading(false);
+      } catch (err) {
+        console.error("Firestore read failed:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();

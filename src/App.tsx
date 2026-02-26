@@ -12,8 +12,16 @@ import './App.css';
 import DepartmentsList from "./pages/DepartmentsList";
 import DepartmentStepperForm from "./components/StepperForm/DepartamentStepperForm";
 import DepartmentEditStepperForm from "./pages/DepartmentEditStepperForm";
+import { useEffect } from "react";
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    console.log("Auth user:", user);
+    console.log("Auth loading:", loading);
+  }, [user, loading]);
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>

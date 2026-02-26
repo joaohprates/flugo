@@ -8,7 +8,6 @@ export default function PrivateRoute({ children }: any) {
   console.log("loading:", loading);
   console.log("user:", user);
 
-  if (loading) return <div>Carregando...</div>;
 
   if (!user) {
     console.log("REDIRECIONANDO LOGIN");
