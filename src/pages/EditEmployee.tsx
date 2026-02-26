@@ -17,7 +17,7 @@ export default function EditEmployee() {
     name: "",
     email: "",
     departmentId: "",
-    status: true,
+    status: false,
     role: "",
     admissionDate: "",
     level: "",
@@ -64,6 +64,7 @@ export default function EditEmployee() {
       <BasicInfoForm
         formData={formData}
         setFormData={setFormData}
+        isEdit
       />
 
       <ProfessionalInfoForm

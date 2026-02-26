@@ -8,17 +8,22 @@ import {
 import { useState } from "react";
 import type { EmployeeFormData } from "./StepperForm/StepperForm";
 
-
 type Props = {
   formData: EmployeeFormData;
   setFormData: React.Dispatch<React.SetStateAction<EmployeeFormData>>;
+  isEdit?: boolean;
 };
 
-const BasicInfoForm = ({ formData, setFormData }: Props) => {
+export default function BasicInfoForm({
+  formData,
+  setFormData,
+  isEdit = false
+}: Props) {
+
   const [emailError, setEmailError] = useState(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       name: e.target.value,
     }));
@@ -27,7 +32,7 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       email: value,
     }));
@@ -37,7 +42,7 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       status: e.target.checked,
     }));
@@ -49,11 +54,11 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
       <Typography
         fontSize={24}
         fontWeight={700}
-        fontStyle={"bold"}
         color="#637381"
       >
         Informações Básicas
       </Typography>
+
       <TextField
         label="Nome"
         value={formData.name}
@@ -74,6 +79,7 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
         required
         className="text-field-modelo-mm"
       />
+
       <FormControlLabel
         control={
           <Switch
@@ -93,10 +99,9 @@ const BasicInfoForm = ({ formData, setFormData }: Props) => {
             }}
           />
         }
-        label="Ativar ao criar"
+        label={isEdit ? "Colaborador ativo" : "Ativar ao criar"}
       />
+
     </Box>
   );
-};
-
-export default BasicInfoForm;
+}

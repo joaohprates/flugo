@@ -18,6 +18,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
@@ -28,12 +33,18 @@ type Employee = {
   id: string;
   name: string;
   email: string;
-  department: string;
+  departmentId: string;
   status: boolean;
+};
+type Department = {
+  id: string;
+  name: string;
 };
 
 function EmployeesList() {
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
 
   const handleSelect = (id: string) => {
     setSelected(prev =>
@@ -63,6 +74,12 @@ function EmployeesList() {
 
     setSelected([]);
   };
+
+  const getDepartmentName = (departmentId: string) => {
+    const department = departments.find(dep => dep.id === departmentId);
+    return department ? department.name : "-";
+  };
+
   const navigate = useNavigate();
 
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -77,25 +94,34 @@ function EmployeesList() {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
-    const fetchEmployees = async () => {
+    const fetchData = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "employees"));
 
-        const data: Employee[] = querySnapshot.docs.map((doc) => ({
+        const empSnapshot = await getDocs(collection(db, "employees"));
+        const depSnapshot = await getDocs(collection(db, "departments"));
+
+        const empData: Employee[] = empSnapshot.docs.map(doc => ({
           id: doc.id,
           ...(doc.data() as Omit<Employee, "id">),
         }));
 
-        setEmployees(data);
+        const depData: Department[] = depSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...(doc.data() as Omit<Department, "id">),
+        }));
+
+        setEmployees(empData);
+        setDepartments(depData);
+
       } catch (error) {
-        console.error("Erro ao buscar colaboradores:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEmployees();
-  }, []);
+    fetchData();
+}, []);
 
   const handleSort = (property: keyof Employee) => {
     const isAsc = orderBy === property && order === "asc";
@@ -106,7 +132,10 @@ function EmployeesList() {
   const filteredEmployees = employees.filter(emp =>
     emp.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
     emp.email.toLowerCase().includes(emailFilter.toLowerCase()) &&
-    (departmentFilter === "" || emp.department === departmentFilter)
+    (
+      departmentFilter === "" ||
+      emp.departmentId === departmentFilter
+    )
   );
 
   const sortedEmployees = [...filteredEmployees].sort((a, b) => {
@@ -170,7 +199,7 @@ function EmployeesList() {
             <Button
               variant="contained"
               color="error"
-              onClick={handleDelete}
+              onClick={() => setConfirmOpen(true)}
               sx={{
                 height: 44,
                 minWidth: 160,
@@ -203,8 +232,7 @@ function EmployeesList() {
           fullWidth
         />
 
-        <FormControl fullWidth
-        className="text-field-modelo-mm">
+        <FormControl fullWidth className="text-field-modelo-mm">
           <InputLabel>Departamento</InputLabel>
           <Select
             value={departmentFilter}
@@ -212,10 +240,13 @@ function EmployeesList() {
             onChange={(e) => setDepartmentFilter(e.target.value)}
           >
             <MenuItem value="">Todos</MenuItem>
-            <MenuItem value="Tecnologia">Tecnologia</MenuItem>
-            <MenuItem value="Financeiro">Financeiro</MenuItem>
-            <MenuItem value="Recursos Humanos">RH</MenuItem>
-            <MenuItem value="Marketing">Marketing</MenuItem>
+
+            {departments.map(dep => (
+              <MenuItem key={dep.id} value={dep.id}>
+                {dep.name}
+              </MenuItem>
+            ))}
+
           </Select>
         </FormControl>
 
@@ -290,9 +321,9 @@ function EmployeesList() {
 
                 <TableCell sx={{ width: "20%" }}>
                   <TableSortLabel
-                    active={orderBy === "department"}
-                    direction={orderBy === "department" ? order : "asc"}
-                    onClick={() => handleSort("department")}
+                    active={orderBy === "departmentId"}
+                    direction={orderBy === "departmentId" ? order : "asc"}
+                    onClick={() => handleSort("departmentId")}
                   >
                     Departamento
                   </TableSortLabel>
@@ -311,7 +342,13 @@ function EmployeesList() {
               </TableRow>
             </TableHead>
 
-            <TableBody>
+            <TableBody
+              sx={{
+                  "& .MuiTableRow-root:hover":{
+                      backgroundColor: "#F4F6F8"
+                  }
+              }}
+            >
               {sortedEmployees.map((emp) => (
                 <TableRow key={emp.id}>
                   <TableCell padding="checkbox">
@@ -339,7 +376,7 @@ function EmployeesList() {
                     }}>
                     {emp.email}
                   </TableCell>
-                  <TableCell>{emp.department}</TableCell>
+                  <TableCell>{getDepartmentName(emp.departmentId)}</TableCell>
 
                   <TableCell>
                     <Chip
@@ -361,6 +398,43 @@ function EmployeesList() {
           </Table>
         </Paper>
       )}
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+      >
+        <DialogTitle>
+          Confirmar exclusão
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            Você realmente deseja excluir {selected.length} colaborador(s)?
+            Essa ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+
+          <Button
+            onClick={() => setConfirmOpen(false)}
+            sx={{ color: "black" }}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            color="error"
+            variant="contained"
+            onClick={async () => {
+              await handleDelete();
+              setConfirmOpen(false);
+            }}
+          >
+            Excluir
+          </Button>
+
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

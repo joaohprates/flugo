@@ -154,6 +154,7 @@ function DepartmentStepperForm() {
 
           <TextField
             label="Nome do Departamento"
+            className="text-field-modelo-mm"
             value={formData.name}
             onChange={(e) =>
               setFormData(prev => ({
@@ -166,7 +167,8 @@ function DepartmentStepperForm() {
             sx={{ mb: 3 }}
           />
 
-          <FormControl fullWidth required>
+          <FormControl fullWidth required
+          className="text-field-modelo-mm">
             <InputLabel>Gestor Responsável</InputLabel>
             <Select
               value={formData.managerId}
@@ -194,7 +196,14 @@ function DepartmentStepperForm() {
             }}
           >
 
-            <Button onClick={handleBack} disabled={loading}>
+            <Button onClick={handleBack} disabled={loading}
+            sx={{
+                color: "black",
+                width: {
+                  xs: "100%",
+                  sm: "auto",
+                },
+              }} >
               Voltar
             </Button>
 

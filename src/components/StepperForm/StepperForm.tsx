@@ -218,7 +218,10 @@ export function StepperForm() {
 
         <Box sx={{ flex: 1, position: "relative", zIndex: 1 }}>
           {activeStep === 0 && (
-            <BasicInfoForm formData={formData} setFormData={setFormData} />
+            <BasicInfoForm 
+            formData={formData} 
+            setFormData={setFormData} 
+            isEdit={false} />
           )}
 
           {activeStep === 1 && (

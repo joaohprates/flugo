@@ -8,6 +8,7 @@ import "@fontsource/public-sans/500.css";
 import "@fontsource/public-sans/600.css";
 import "@fontsource/public-sans/700.css";
 
+document.documentElement.style.colorScheme = "light";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

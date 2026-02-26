@@ -11,6 +11,11 @@ import {
   Checkbox,
   TextField,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../services/firebase";
@@ -23,7 +28,7 @@ type Department = {
 };
 
 function DepartmentsList() {
-
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -160,7 +165,7 @@ const [order] = useState<"asc" | "desc">("asc");
             <Button
               variant="contained"
               color="error"
-              onClick={handleDelete}
+              onClick={() => setConfirmOpen(true)}
               sx={{
                 height: 44,
                 minWidth: 160,
@@ -236,7 +241,13 @@ const [order] = useState<"asc" | "desc">("asc");
             </TableRow>
           </TableHead>
 
-          <TableBody>
+          <TableBody
+          sx={{
+              "& .MuiTableRow-root:hover":{
+                  backgroundColor: "#F4F6F8"
+              }
+          }}
+          >
             {sortedDepartments.map(dep => (
               <TableRow key={dep.id}>
 
@@ -269,6 +280,43 @@ const [order] = useState<"asc" | "desc">("asc");
 
         </Table>
       </Paper>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+      >
+        <DialogTitle>
+          Confirmar exclusão
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            Você realmente deseja excluir {selected.length} departamento(s)?
+            Essa ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+
+          <Button
+            onClick={() => setConfirmOpen(false)}
+            sx={{ color: "black" }}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            color="error"
+            variant="contained"
+            onClick={async () => {
+              await handleDelete();
+              setConfirmOpen(false);
+            }}
+          >
+            Excluir
+          </Button>
+
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
