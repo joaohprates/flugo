@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -12,7 +12,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -25,11 +25,11 @@ type Department = {
 function DepartmentsList() {
 
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [employees] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const navigate = useNavigate();
   const [nameFilter, setNameFilter] = useState("");
-  const [loading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
 const [orderBy] = useState<keyof Department>("name");
 const [order] = useState<"asc" | "desc">("asc");
@@ -64,7 +64,7 @@ const [order] = useState<"asc" | "desc">("asc");
     setSelected([]);
   };
 
-  {/*useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const depSnapshot = await getDocs(collection(db, "departments"));
@@ -92,7 +92,7 @@ const [order] = useState<"asc" | "desc">("asc");
 
     fetchData();
   }, []);
-*/}
+
   const filteredDepartments = departments.filter(dep =>
     dep.name.toLowerCase().includes(nameFilter.toLowerCase())
   );
