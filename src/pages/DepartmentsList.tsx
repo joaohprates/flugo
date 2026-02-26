@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -12,7 +12,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -25,11 +25,11 @@ type Department = {
 function DepartmentsList() {
 
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [employees, setEmployees] = useState<any[]>([]);
+  const [employees] = useState<any[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const navigate = useNavigate();
   const [nameFilter, setNameFilter] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(true);
 
 const [orderBy] = useState<keyof Department>("name");
 const [order] = useState<"asc" | "desc">("asc");
