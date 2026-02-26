@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
@@ -26,7 +26,7 @@ export default function EditEmployee() {
   });
 
   const [loading, setLoading] = useState(true);
-
+  const [oldDepartmentId,setOldDepartmentId] = useState("");
   
   useEffect(() => {
 
@@ -36,7 +36,9 @@ export default function EditEmployee() {
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
-        setFormData(snap.data() as EmployeeFormData);
+        const data = snap.data() as EmployeeFormData;
+        setFormData(data);
+        setOldDepartmentId(data.departmentId);
       }
 
       setLoading(false);
@@ -49,9 +51,26 @@ export default function EditEmployee() {
   
   const handleUpdate = async () => {
 
-    await updateDoc(doc(db, "employees", id!), {
+    await updateDoc(doc(db,"employees",id!),{
       ...formData
     });
+
+    if(oldDepartmentId !== formData.departmentId){
+
+      await updateDoc(
+        doc(db,"departments",oldDepartmentId),
+        {
+          members: arrayRemove(id)
+        }
+      );
+
+      await updateDoc(
+        doc(db,"departments",formData.departmentId),
+        {
+          members: arrayUnion(id)
+        }
+      );
+    }
 
     navigate("/employees");
   };

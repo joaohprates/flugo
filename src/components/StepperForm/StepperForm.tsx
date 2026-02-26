@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import BasicInfoForm from "../BasicInfoForm";
 import ProfessionalInfoForm from "../ProfessionalInfoForm";
-import { collection, addDoc, serverTimestamp, query, where, getDocs  } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, arrayUnion  } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -118,11 +118,16 @@ export function StepperForm() {
     try {
       setLoading(true);
 
-      await addDoc(collection(db, "employees"), {
+      const empRef = await addDoc(collection(db, "employees"), {
         ...formData,
         createdAt: serverTimestamp(),
       });
-
+      await updateDoc(
+        doc(db,"departments",formData.departmentId),
+        {
+          members: arrayUnion(empRef.id)
+        }
+      );
       navigate("/employees");
     } catch (error) {
       console.error("Erro ao salvar:", error);

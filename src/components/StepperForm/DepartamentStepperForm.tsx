@@ -12,52 +12,62 @@ import {
   Select,
   MenuItem,
   TextField,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
-import { collection, addDoc, serverTimestamp, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
 
 type DepartmentFormData = {
   name: string;
   managerId: string;
+  members: string[];
 };
+
 type EmployeeFromDB = {
   id: string;
   name: string;
   level: string;
 };
-function DepartmentStepperForm() {
 
+function DepartmentStepperForm() {
   const [activeStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [managers, setManagers] = useState<EmployeeFromDB[]>([]);
-
+  const [employees, setEmployees] = useState<EmployeeFromDB[]>([]);
   const [formData, setFormData] = useState<DepartmentFormData>({
     name: "",
     managerId: "",
+    members: [],
   });
 
   const navigate = useNavigate();
 
   const steps = ["Informações do Departamento"];
-
   const progress = ((activeStep + 1) / steps.length) * 100;
 
   useEffect(() => {
-    const fetchManagers = async () => {
+    const fetchData = async () => {
       const snapshot = await getDocs(collection(db, "employees"));
 
-      const data: EmployeeFromDB[] = snapshot.docs
-        .map(doc => ({
-            id: doc.id,
-            ...(doc.data() as Omit<EmployeeFromDB, "id">)
-        }))
-        .filter(emp => emp.level === "Gestor");
+      const allEmployees = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<EmployeeFromDB, "id">),
+      }));
 
-      setManagers(data);
+      setManagers(allEmployees.filter((emp) => emp.level === "Gestor"));
+      setEmployees(allEmployees);
     };
 
-    fetchManagers();
+    fetchData();
   }, []);
 
   const isValid = () => {
@@ -71,25 +81,30 @@ function DepartmentStepperForm() {
   };
 
   const handleSubmit = async () => {
-
     if (!isValid()) {
-      alert("Preencha todos os campos.");
+      alert("Preencha todos os campos");
       return;
     }
 
     try {
       setLoading(true);
 
-      await addDoc(collection(db, "departments"), {
+      const depRef = await addDoc(collection(db, "departments"), {
         name: formData.name,
         managerId: formData.managerId,
+        members: formData.members,
         createdAt: serverTimestamp(),
       });
 
-      navigate("/departments");
+      await Promise.all(
+        formData.members.map((empId) =>
+          updateDoc(doc(db, "employees", empId), {
+            departmentId: depRef.id,
+          })
+        )
+      );
 
-    } catch (error) {
-      console.error("Erro ao salvar departamento:", error);
+      navigate("/departments");
     } finally {
       setLoading(false);
     }
@@ -97,7 +112,6 @@ function DepartmentStepperForm() {
 
   return (
     <Box>
-
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
         <Box sx={{ flex: 1 }}>
           <LinearProgress
@@ -120,7 +134,6 @@ function DepartmentStepperForm() {
       </Box>
 
       <Box sx={{ display: "flex", gap: 6 }}>
-
         <Box sx={{ width: 220 }}>
           <Stepper
             activeStep={activeStep}
@@ -138,7 +151,7 @@ function DepartmentStepperForm() {
               },
             }}
           >
-            {steps.map(label => (
+            {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
               </Step>
@@ -147,7 +160,6 @@ function DepartmentStepperForm() {
         </Box>
 
         <Box sx={{ flex: 1 }}>
-
           <Typography fontSize={24} fontWeight={700} color="#637381" mb={3}>
             Informações do Departamento
           </Typography>
@@ -157,9 +169,9 @@ function DepartmentStepperForm() {
             className="text-field-modelo-mm"
             value={formData.name}
             onChange={(e) =>
-              setFormData(prev => ({
+              setFormData((prev) => ({
                 ...prev,
-                name: e.target.value
+                name: e.target.value,
               }))
             }
             fullWidth
@@ -167,26 +179,56 @@ function DepartmentStepperForm() {
             sx={{ mb: 3 }}
           />
 
-          <FormControl fullWidth required
-          className="text-field-modelo-mm">
+          <FormControl fullWidth required className="text-field-modelo-mm">
             <InputLabel>Gestor Responsável</InputLabel>
             <Select
               value={formData.managerId}
               label="Gestor Responsável"
               onChange={(e) =>
-                setFormData(prev => ({
+                setFormData((prev) => ({
                   ...prev,
-                  managerId: e.target.value
+                  managerId: e.target.value,
                 }))
               }
             >
-              {managers.map(manager => (
+              {managers.map((manager) => (
                 <MenuItem key={manager.id} value={manager.id}>
                   {manager.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+
+          <Typography mt={4} mb={2} fontWeight={700}>
+            Colaboradores do Departamento
+          </Typography>
+
+          <Box display="flex" flexDirection="column">
+            {employees.map((emp) => (
+              <FormControlLabel
+                key={emp.id}
+                control={
+                  <Checkbox
+                    checked={formData.members.includes(emp.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          members: [...prev.members, emp.id],
+                        }));
+                      } else {
+                        setFormData((prev) => ({
+                          ...prev,
+                          members: prev.members.filter((id) => id !== emp.id),
+                        }));
+                      }
+                    }}
+                  />
+                }
+                label={emp.name}
+              />
+            ))}
+          </Box>
 
           <Box
             sx={{
@@ -195,15 +237,17 @@ function DepartmentStepperForm() {
               mt: 4,
             }}
           >
-
-            <Button onClick={handleBack} disabled={loading}
-            sx={{
+            <Button
+              onClick={handleBack}
+              disabled={loading}
+              sx={{
                 color: "black",
                 width: {
                   xs: "100%",
                   sm: "auto",
                 },
-              }} >
+              }}
+            >
               Voltar
             </Button>
 
@@ -224,7 +268,6 @@ function DepartmentStepperForm() {
             >
               Concluir
             </Button>
-
           </Box>
         </Box>
       </Box>

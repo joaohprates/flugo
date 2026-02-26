@@ -24,6 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 type DepartmentFormData = {
   name: string;
   managerId: string;
+  members: string[];
 };
 
 type EmployeeFromDB = {
@@ -31,6 +32,7 @@ type EmployeeFromDB = {
   name: string;
   level: string;
 };
+
 type Employee = {
   id: string;
   name: string;
@@ -40,69 +42,96 @@ type Employee = {
 };
 
 function DepartmentEditStepperForm() {
-
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<DepartmentFormData>({
     name: "",
-    managerId: ""
+    managerId: "",
+    members: [],
   });
 
   const [managers, setManagers] = useState<EmployeeFromDB[]>([]);
-  const [employees, setEmployees] = useState<Employee[]>([]);
-
+  const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      const depRef = doc(db, "departments", id!);
+      const depSnap = await getDoc(depRef);
 
-        const depRef = doc(db, "departments", id!);
-        const depSnap = await getDoc(depRef);
+      if (depSnap.exists()) {
+        const data = depSnap.data() as DepartmentFormData;
+        setFormData(data);
+      }
 
-        if (depSnap.exists()) {
-        setFormData(depSnap.data() as DepartmentFormData);
-        }
+      const empSnapshot = await getDocs(collection(db, "employees"));
 
-        const empSnapshot = await getDocs(collection(db, "employees"));
-
-        const managersData: EmployeeFromDB[] = empSnapshot.docs
-        .map(doc => ({
-            id: doc.id,
-            ...(doc.data() as Omit<EmployeeFromDB, "id">)
+      const managersData: EmployeeFromDB[] = empSnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<EmployeeFromDB, "id">),
         }))
-        .filter(emp => emp.level === "Gestor");
+        .filter((emp) => emp.level === "Gestor");
 
-        setManagers(managersData);
+      setManagers(managersData);
 
-        const allEmployeesSnapshot = await getDocs(collection(db, "employees"));
+      const allEmployees: Employee[] = empSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<Employee, "id">),
+      }));
 
-        const departmentEmployees: Employee[] = allEmployeesSnapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                ...(doc.data() as Omit<Employee, "id">)
-            }))
-            .filter(emp => emp.departmentId === id);
+      setAllEmployees(allEmployees);
 
-        setEmployees(departmentEmployees);
+      setFormData((prev) => ({
+        ...prev,
+        members: allEmployees
+          .filter((emp) => emp.departmentId === id)
+          .map((emp) => emp.id),
+      }));
     };
 
     fetchData();
-
   }, []);
 
   const handleSubmit = async () => {
+    const depRef = doc(db, "departments", id!);
+    const newMembers = formData.members;
 
-    if (!formData.name || !formData.managerId) {
-      alert("Preencha tudo.");
-      return;
-    }
-
-    await updateDoc(doc(db, "departments", id!), {
-      ...formData
+    await updateDoc(depRef, {
+      ...formData,
+      members: newMembers,
     });
 
+    await Promise.all(
+      newMembers.map(async (empId) => {
+        const empRef = doc(db, "employees", empId);
+        const empSnap = await getDoc(empRef);
+
+        if (!empSnap.exists()) return;
+
+        const oldDep = empSnap.data().departmentId;
+
+        if (oldDep && oldDep !== id) {
+          const oldDepRef = doc(db, "departments", oldDep);
+          const oldDepSnap = await getDoc(oldDepRef);
+
+          if (oldDepSnap.exists()) {
+            const oldMembers = oldDepSnap.data().members || [];
+
+            await updateDoc(oldDepRef, {
+              members: oldMembers.filter((m: string) => m !== empId),
+            });
+          }
+        }
+
+        await updateDoc(empRef, {
+          departmentId: id,
+        });
+      })
+    );
+
     navigate("/departments");
-    };
+  };
 
     return (
         <Box display="flex" flexDirection="column" gap={4}>
@@ -219,8 +248,37 @@ function DepartmentEditStepperForm() {
                         }
                     }}
                     >
-                        {employees.map(emp => (
-                        <TableRow key={emp.id}>
+                        {allEmployees.map(emp => (
+                        <TableRow
+                            key={emp.id}
+                            hover
+                            onClick={()=>{
+
+                                if(formData.members.includes(emp.id)){
+
+                                setFormData(prev=>({
+                                    ...prev,
+                                    members:prev.members.filter(id=>id!==emp.id)
+                                }));
+
+                                }else{
+
+                                setFormData(prev=>({
+                                    ...prev,
+                                    members:[...prev.members,emp.id]
+                                }));
+
+                                }
+
+                            }}
+                            sx={{
+                                cursor:"pointer",
+                                backgroundColor:
+                                formData.members.includes(emp.id)
+                                ? "#DCFCE7"
+                                : "transparent"
+                            }}
+                        >
                             <TableCell
                             sx={{ 
                                 whiteSpace: "nowrap",
