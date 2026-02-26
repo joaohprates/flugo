@@ -13,7 +13,7 @@ import {
   Button,
 } from "@mui/material";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../services/firestore";
+import { db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 
 type Department = {
@@ -31,8 +31,8 @@ function DepartmentsList() {
   const [nameFilter, setNameFilter] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const [orderBy, setOrderBy] = useState<keyof Department>("name");
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
+const [orderBy] = useState<keyof Department>("name");
+const [order] = useState<"asc" | "desc">("asc");
 
   const getManagerName = (id: string) => {
     const manager = employees.find(emp => emp.id === id);

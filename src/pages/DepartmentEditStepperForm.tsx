@@ -10,7 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { doc, updateDoc, getDoc, getDocs, collection } from "firebase/firestore";
-import { db } from "../services/firestore";
+import { db } from "../services/firebase";
 import { useNavigate, useParams } from "react-router-dom";
 
 type DepartmentFormData = {
