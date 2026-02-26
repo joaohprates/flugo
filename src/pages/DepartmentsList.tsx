@@ -64,7 +64,7 @@ const [order] = useState<"asc" | "desc">("asc");
     setSelected([]);
   };
 
-  useEffect(() => {
+  {/*useEffect(() => {
     const fetchData = async () => {
       try {
         const depSnapshot = await getDocs(collection(db, "departments"));
@@ -92,7 +92,7 @@ const [order] = useState<"asc" | "desc">("asc");
 
     fetchData();
   }, []);
-
+*/}
   const filteredDepartments = departments.filter(dep =>
     dep.name.toLowerCase().includes(nameFilter.toLowerCase())
   );
