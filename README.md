@@ -14,7 +14,10 @@ Aplicação de cadastro de funcionários em formato multi-step desenvolvida com:
 
 A aplicação está disponível em:
 
-https://flugovercel.vercel.app/
+https://flugovercel-joaohprates-projects.vercel.app/
+
+usuário: flugo@flugo.com
+senha: 123456
 
 ---
 

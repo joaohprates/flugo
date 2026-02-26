@@ -3,33 +3,75 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../services/auth";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box } from "@mui/material";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { Alert } from "@mui/material";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
-
+  
+  
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleLogin();
+  };
   const handleLogin = async () => {
-    try {
+    setErrorMessage("");
+    setSuccessMessage("");
 
-      console.log("Tentando login com:", email);
-      
+    try {
       await signInWithEmailAndPassword(auth, email, password);
 
-      console.log("LOGIN SUCESSO:");
       localStorage.setItem("login_time", Date.now().toString());
-
       navigate("/employees");
+
     } catch (error: any) {
-      console.log("ERRO LOGIN:");
-      console.log(error.code);
-      console.log(error.message);
-      alert("Erro: " + error.code);
+      setErrorMessage(getFirebaseErrorMessage(error.code));
+    }
+  };
+  const handleForgotPassword = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    if (!email.trim()) {
+      setErrorMessage("Digite seu email primeiro");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSuccessMessage("Email de redefinição enviado com sucesso");
+
+    } catch (error: any) {
+      setErrorMessage(getFirebaseErrorMessage(error.code));
+    }
+  };
+  const getFirebaseErrorMessage = (code: string) => {
+    switch (code) {
+      case "auth/user-not-found":
+        return "Usuário não encontrado";
+      case "auth/wrong-password":
+        return "Senha incorreta";
+      case "auth/invalid-email":
+        return "Email inválido";
+      case "auth/invalid-credential":
+        return "Email ou senha incorretos";
+      default:
+        return "Erro inesperado. Tente novamente.";
     }
   };
 
   return (
-    <Box display="flex" flexDirection="column" gap={2}
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      display="flex"
+      flexDirection="column"
+      gap={2}
       sx={{ maxWidth: 400, margin: "100px auto", p: 3}}>
       <Box display="flex" flexDirection="column" alignItems="center">
         <img
@@ -39,13 +81,24 @@ export default function Login() {
           style={{ width: "50%", height: "auto", marginBottom: 32}}
         />
       </Box>
+      {errorMessage && (
+        <Alert severity="error">
+          {errorMessage}
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert severity="success">
+          {successMessage}
+        </Alert>
+      )}
       <TextField label="Email" onChange={(e)=>setEmail(e.target.value)}
         className="text-field-modelo-mm"
         />
       <TextField label="Senha" type="password" onChange={(e)=>setPassword(e.target.value)}
         className="text-field-modelo-mm"
         />
-      <Button variant="contained" onClick={handleLogin}
+      <Button type="submit" variant="contained"
         sx={{
                 fontWeight: 700,
                 backgroundColor: "#22C55E",
@@ -59,7 +112,7 @@ export default function Login() {
             }} >
         Entrar
       </Button>
-      <Button variant="contained" onClick={() => navigate("/register")}
+      <Button variant="contained" onClick={handleForgotPassword}
         sx={{
                 fontWeight: 700,
                 backgroundColor: "#2020202a",
