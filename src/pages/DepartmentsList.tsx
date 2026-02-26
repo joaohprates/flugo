@@ -31,8 +31,8 @@ function DepartmentsList() {
   const [nameFilter, setNameFilter] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const [orderBy] = useState<keyof Department>("name");
-  const [order] = useState<"asc" | "desc">("asc");
+  const [orderBy, setOrderBy] = useState<keyof Department>("name");
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
 
   const getManagerName = (id: string) => {
     const manager = employees.find(emp => emp.id === id);

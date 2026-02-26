@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../services/firestore";
+import { db } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 

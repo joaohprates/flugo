@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import { collection, addDoc, serverTimestamp, getDocs } from "firebase/firestore";
-import { db } from "../../services/firestore";
+import { db } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
 
 type DepartmentFormData = {
@@ -28,7 +28,7 @@ type EmployeeFromDB = {
 };
 function DepartmentStepperForm() {
 
-  const [activeStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [managers, setManagers] = useState<EmployeeFromDB[]>([]);
 

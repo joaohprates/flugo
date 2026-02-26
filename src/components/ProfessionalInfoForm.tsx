@@ -10,7 +10,7 @@ import {
 import type { EmployeeFormData } from "./StepperForm/StepperForm";
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../services/firestore";
+import { db } from "../services/firebase";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
